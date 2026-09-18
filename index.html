@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QR Platform | Digital Profile</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            QR<span>Platform</span>
+        </div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#create">Create</a>
+        </nav>
+
+    </header>
+
+
+
+    <!-- HERO -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <p class="eyebrow">
+                DIGITAL IDENTITY • SIMPLIFIED
+            </p>
+
+            <h1>
+                Create Your
+                <span>Digital Profile</span>
+            </h1>
+
+            <p class="hero-text">
+                Create your digital identity and share
+                your important information with one
+                simple QR code.
+            </p>
+
+            <button
+                class="hero-btn"
+                onclick="openCreateSection()"
+            >
+                Create My Profile
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- CREATE SECTION -->
+
+    <section class="create-section" id="create">
+
+        <div class="section-heading">
+
+            <p class="eyebrow">
+                GET STARTED
+            </p>
+
+            <h2>
+                Choose Profile Type
+            </h2>
+
+            <p>
+                Select the type of digital profile you want.
+            </p>
+
+        </div>
+
+
+
+        <div class="category-grid">
+
+
+            <!-- PERSONAL -->
+
+            <div
+                class="category-card"
+                onclick="openProfileForm('Personal')"
+            >
+
+                <div class="category-icon">
+                    👤
+                </div>
+
+                <h3>
+                    Personal
+                </h3>
+
+                <p>
+                    Create a simple digital identity
+                    for yourself.
+                </p>
+
+                <span>
+                    Create Profile →
+                </span>
+
+            </div>
+
+
+
+            <!-- PROFESSIONAL -->
+
+            <div
+                class="category-card"
+                onclick="openProfileForm('Professional')"
+            >
+
+                <div class="category-icon">
+                    💼
+                </div>
+
+                <h3>
+                    Professional
+                </h3>
+
+                <p>
+                    Showcase your skills, work
+                    and professional links.
+                </p>
+
+                <span>
+                    Create Profile →
+                </span>
+
+            </div>
+
+
+
+            <!-- BUSINESS -->
+
+            <div
+                class="category-card"
+                onclick="openProfileForm('Business')"
+            >
+
+                <div class="category-icon">
+                    🏢
+                </div>
+
+                <h3>
+                    Business
+                </h3>
+
+                <p>
+                    Share your business information
+                    with your customers.
+                </p>
+
+                <span>
+                    Create Profile →
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- PROFILE FORM -->
+
+    <section
+    class="form-section"
+    id="formSection"
+>
+
+    <div class="form-container">
+
+        <div class="section-heading">
+
+            <p class="eyebrow">
+                BUILD YOUR IDENTITY
+            </p>
+
+            <h2 id="formTitle">
+                Personal Digital Profile
+            </h2>
+
+            <p id="formDescription">
+                Enter your personal details below.
+            </p>
+
+        </div>
+
+
+        <form id="profileForm">
+<!-- PROFILE PHOTO -->
+
+<div class="photo-upload">
+
+    <div
+        class="photo-preview"
+        id="photoPreview"
+    >
+        👤
+    </div>
+
+    <label
+        for="profilePhoto"
+        class="photo-upload-btn"
+    >
+        📷 Add Profile Photo
+    </label>
+
+    <input
+        type="file"
+        id="profilePhoto"
+        accept="image/*"
+        hidden
+    >
+
+    <p class="photo-help">
+        JPG, PNG or WEBP • Max 5MB
+    </p>
+
+</div>
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="e.g. Anil Kumar"
+                    required
+                >
+
+            </div>
+
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="e.g. anil@example.com"
+                    required
+                >
+
+            </div>
+
+
+
+            <!-- PHONE -->
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    placeholder="+91 98765 43210"
+                >
+
+            </div>
+
+
+
+            <!-- WEBSITE -->
+
+            <div class="form-group">
+
+                <label for="website">
+                    Website
+                </label>
+
+                <input
+                    type="url"
+                    id="website"
+                    placeholder="https://yourwebsite.com"
+                >
+
+            </div>
+
+
+
+            <!-- LINKEDIN -->
+
+            <div
+                class="form-group"
+                id="linkedinGroup"
+            >
+
+                <label for="linkedin">
+                    LinkedIn
+                </label>
+
+                <input
+                    type="url"
+                    id="linkedin"
+                    placeholder="https://linkedin.com/in/username"
+                >
+
+            </div>
+
+
+
+            <!-- GITHUB -->
+
+            <div
+                class="form-group"
+                id="githubGroup"
+            >
+
+                <label for="github">
+                    GitHub
+                </label>
+
+                <input
+                    type="url"
+                    id="github"
+                    placeholder="https://github.com/username"
+                >
+
+            </div>
+
+
+
+            <!-- SKILLS -->
+
+            <div
+                class="form-group"
+                id="skillsGroup"
+                style="display: none;"
+            >
+
+                <label for="skills">
+                    Skills
+                </label>
+
+                <input
+                    type="text"
+                    id="skills"
+                    placeholder="Java, SQL, HTML, CSS..."
+                >
+
+            </div>
+
+
+
+            <!-- EXPERIENCE -->
+
+            <div
+                class="form-group"
+                id="experienceGroup"
+                style="display: none;"
+            >
+
+                <label for="experience">
+                    Experience
+                </label>
+
+                <input
+                    type="text"
+                    id="experience"
+                    placeholder="e.g. Fresher / 2 Years Experience"
+                >
+
+            </div>
+
+
+
+            <!-- BUSINESS NAME -->
+
+            <div
+                class="form-group"
+                id="businessNameGroup"
+                style="display: none;"
+            >
+
+                <label for="businessName">
+                    Business Name
+                </label>
+
+                <input
+                    type="text"
+                    id="businessName"
+                    placeholder="e.g. ABC Solutions"
+                >
+
+            </div>
+
+
+
+            <!-- BUSINESS LOCATION -->
+
+            <div
+                class="form-group"
+                id="businessLocationGroup"
+                style="display: none;"
+            >
+
+                <label for="businessLocation">
+                    Business Location
+                </label>
+
+                <input
+                    type="text"
+                    id="businessLocation"
+                    placeholder="e.g. Kolkata, India"
+                >
+
+            </div>
+
+
+
+            <!-- ABOUT -->
+
+            <div class="form-group">
+
+                <label for="bio">
+                    About You
+                </label>
+
+                <textarea
+                    id="bio"
+                    rows="5"
+                    placeholder="Tell people about yourself..."
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="generate-btn"
+            >
+                Generate My QR Code
+            </button>
+
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+    <!-- QR RESULT -->
+
+    <section
+        class="qr-section"
+        id="qrSection"
+    >
+
+        <div class="qr-container">
+
+
+            <div class="section-heading">
+
+                <p class="eyebrow">
+                    DIGITAL IDENTITY • READY
+                </p>
+
+                <h2>
+                    Your QR Code is Ready
+                </h2>
+
+                <p>
+                    Scan or share this QR code.
+                </p>
+
+            </div>
+
+
+
+            <div class="qr-frame">
+
+                <div id="qrcode"></div>
+
+            </div>
+
+
+
+            <div class="profile-link-box">
+
+                <p class="link-label">
+                    YOUR PROFILE LINK
+                </p>
+
+                <p class="link-description">
+                    Share this link anywhere.
+                </p>
+
+
+                <div class="profile-link-row">
+
+                    <input
+                        type="text"
+                        id="profileLink"
+                        readonly
+                    >
+
+                    <button
+                        type="button"
+                        class="copy-link-btn"
+                        onclick="copyProfileLink()"
+                    >
+                        Copy
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="copyMessage"
+                    class="copy-message"
+                ></p>
+
+            </div>
+
+
+
+            <div class="qr-actions">
+
+                <button
+                    type="button"
+                    class="download-btn"
+                    onclick="downloadQR()"
+                >
+                    ↓ Download QR
+                </button>
+
+                <button
+                    type="button"
+                    class="new-profile-btn"
+                    onclick="createNewProfile()"
+                >
+                    + Create New Profile
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        © 2026 QRPlatform. Create. Share. Connect.
+
+    </footer>
+
+
+
+    <!-- QR LIBRARY -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"
+    ></script>
+
+
+    <!-- OUR JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
