@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const Database = require("better-sqlite3");
+const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,51 +11,65 @@ const PORT = process.env.PORT || 3000;
 // DATABASE
 // =========================================
 
-const dbPath = path.join(__dirname, "profiles.db");
+if (!process.env.DATABASE_URL) {
+    console.error("❌ DATABASE_URL is not configured.");
+    process.exit(1);
+}
 
-const db = new Database(dbPath);
-
-
-// Create profiles table if it doesn't exist
-
-db.prepare(`
-    CREATE TABLE IF NOT EXISTS profiles (
-
-        id TEXT PRIMARY KEY,
-
-        category TEXT,
-
-        name TEXT NOT NULL,
-
-        email TEXT NOT NULL,
-
-        phone TEXT,
-
-        website TEXT,
-
-        linkedin TEXT,
-
-        github TEXT,
-
-        skills TEXT,
-
-        experience TEXT,
-
-        businessName TEXT,
-
-        businessLocation TEXT,
-
-        bio TEXT,
-
-        profilePhoto TEXT,
-
-        createdAt TEXT
-
-    )
-`).run();
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 
 
-console.log("💾 SQLite database connected!");
+// =========================================
+// INITIALIZE DATABASE
+// =========================================
+
+async function initializeDatabase() {
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS profiles (
+
+            id TEXT PRIMARY KEY,
+
+            category TEXT,
+
+            name TEXT NOT NULL,
+
+            email TEXT NOT NULL,
+
+            phone TEXT,
+
+            website TEXT,
+
+            linkedin TEXT,
+
+            github TEXT,
+
+            skills TEXT,
+
+            experience TEXT,
+
+            "businessName" TEXT,
+
+            "businessLocation" TEXT,
+
+            bio TEXT,
+
+            "profilePhoto" TEXT,
+
+            "createdAt" TEXT
+
+        )
+    `);
+
+    console.log("💾 PostgreSQL database connected!");
+    console.log("📦 Profiles table ready!");
+
+}
 
 
 // =========================================
@@ -71,13 +85,9 @@ app.use(
 );
 
 
-const websitePath =
-    path.join(__dirname, "..");
+const websitePath = path.join(__dirname, "..");
 
-
-app.use(
-    express.static(websitePath)
-);
+app.use(express.static(websitePath));
 
 
 // =========================================
@@ -106,8 +116,7 @@ app.get("/api/test", (req, res) => {
 
         success: true,
 
-        message:
-            "Backend is working!"
+        message: "Backend is working!"
 
     });
 
@@ -118,36 +127,24 @@ app.get("/api/test", (req, res) => {
 // CREATE PROFILE
 // =========================================
 
-app.post("/api/profile", (req, res) => {
+app.post("/api/profile", async (req, res) => {
 
     try {
 
         const {
 
             category,
-
             name,
-
             email,
-
             phone,
-
             website,
-
             linkedin,
-
             github,
-
             skills,
-
             experience,
-
             businessName,
-
             businessLocation,
-
             bio,
-
             profilePhoto
 
         } = req.body;
@@ -183,7 +180,7 @@ app.post("/api/profile", (req, res) => {
 
 
         // =====================================
-        // PROFILE DATA
+        // PROFILE OBJECT
         // =====================================
 
         const profile = {
@@ -234,97 +231,86 @@ app.post("/api/profile", (req, res) => {
 
 
         // =====================================
-        // SAVE TO SQLITE
+        // SAVE PROFILE TO POSTGRESQL
         // =====================================
 
-        const insertProfile = db.prepare(`
-
+        await pool.query(
+            `
             INSERT INTO profiles (
 
                 id,
-
                 category,
-
                 name,
-
                 email,
-
                 phone,
-
                 website,
-
                 linkedin,
-
                 github,
-
                 skills,
-
                 experience,
-
-                businessName,
-
-                businessLocation,
-
+                "businessName",
+                "businessLocation",
                 bio,
-
-                profilePhoto,
-
-                createdAt
+                "profilePhoto",
+                "createdAt"
 
             )
 
             VALUES (
 
-                @id,
-
-                @category,
-
-                @name,
-
-                @email,
-
-                @phone,
-
-                @website,
-
-                @linkedin,
-
-                @github,
-
-                @skills,
-
-                @experience,
-
-                @businessName,
-
-                @businessLocation,
-
-                @bio,
-
-                @profilePhoto,
-
-                @createdAt
+                $1,
+                $2,
+                $3,
+                $4,
+                $5,
+                $6,
+                $7,
+                $8,
+                $9,
+                $10,
+                $11,
+                $12,
+                $13,
+                $14,
+                $15
 
             )
+            `,
+            [
 
-        `);
+                profile.id,
+                profile.category,
+                profile.name,
+                profile.email,
+                profile.phone,
+                profile.website,
+                profile.linkedin,
+                profile.github,
+                profile.skills,
+                profile.experience,
+                profile.businessName,
+                profile.businessLocation,
+                profile.bio,
+                profile.profilePhoto,
+                profile.createdAt
 
-
-        insertProfile.run(profile);
+            ]
+        );
 
 
         // =====================================
-        // PROFILE URL
+        // GENERATE PROFILE URL
         // =====================================
 
-        const profileUrl = `${req.protocol}://${req.get("host")}/profile.html?id=${id}`;
+        const profileUrl =
+            `${req.protocol}://${req.get("host")}/profile.html?id=${id}`;
 
 
         // =====================================
         // RESPONSE
         // =====================================
 
-        res.json({
+        res.status(201).json({
 
             success: true,
 
@@ -334,11 +320,9 @@ app.post("/api/profile", (req, res) => {
             profileId:
                 id,
 
-            profileUrl:
-                profileUrl,
+            profileUrl,
 
-            profile:
-                profile
+            profile
 
         });
 
@@ -347,10 +331,9 @@ app.post("/api/profile", (req, res) => {
     catch (error) {
 
         console.error(
-            "Profile creation error:",
+            "❌ Profile creation error:",
             error
         );
-
 
         res.status(500).json({
 
@@ -372,7 +355,7 @@ app.post("/api/profile", (req, res) => {
 
 app.get(
     "/api/profile/:id",
-    (req, res) => {
+    async (req, res) => {
 
         try {
 
@@ -384,14 +367,19 @@ app.get(
             // FIND PROFILE
             // =================================
 
+            const result =
+                await pool.query(
+                    `
+                    SELECT *
+                    FROM profiles
+                    WHERE id = $1
+                    `,
+                    [id]
+                );
+
+
             const profile =
-                db
-                    .prepare(`
-                        SELECT *
-                        FROM profiles
-                        WHERE id = ?
-                    `)
-                    .get(id);
+                result.rows[0];
 
 
             // =================================
@@ -420,8 +408,7 @@ app.get(
 
                 success: true,
 
-                profile:
-                    profile
+                profile
 
             });
 
@@ -430,10 +417,9 @@ app.get(
         catch (error) {
 
             console.error(
-                "Profile fetch error:",
+                "❌ Profile fetch error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -451,36 +437,74 @@ app.get(
 
 
 // =========================================
+// DATABASE ERROR HANDLER
+// =========================================
+
+pool.on("error", (error) => {
+
+    console.error(
+        "❌ Unexpected PostgreSQL error:",
+        error
+    );
+
+});
+
+
+// =========================================
 // START SERVER
 // =========================================
 
-app.listen(
-    PORT,
-    () => {
+async function startServer() {
 
-        console.log("");
+    try {
 
-        console.log(
-            "================================="
+        await initializeDatabase();
+
+        app.listen(
+            PORT,
+            () => {
+
+                console.log("");
+
+                console.log(
+                    "================================="
+                );
+
+                console.log(
+                    "🚀 QR Platform Server Started"
+                );
+
+                console.log(
+                    `🌐 http://localhost:${PORT}`
+                );
+
+                console.log(
+                    "💾 Database: PostgreSQL"
+                );
+
+                console.log(
+                    "================================="
+                );
+
+                console.log("");
+
+            }
         );
-
-        console.log(
-            "🚀 QR Platform Server Started"
-        );
-
-        console.log(
-            `🌐 http://localhost:${PORT}`
-        );
-
-        console.log(
-            "💾 Database: profiles.db"
-        );
-
-        console.log(
-            "================================="
-        );
-
-        console.log("");
 
     }
-);
+
+    catch (error) {
+
+        console.error(
+            "❌ Failed to start server:",
+            error
+        );
+
+        process.exit(1);
+
+    }
+
+}
+
+
+startServer();
