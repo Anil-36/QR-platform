@@ -317,8 +317,7 @@ app.post("/api/profile", (req, res) => {
         // PROFILE URL
         // =====================================
 
-        const profileUrl =
-            `http://localhost:${PORT}/profile.html?id=${id}`;
+        const profileUrl = `${req.protocol}://${req.get("host")}/profile.html?id=${id}`;
 
 
         // =====================================
